@@ -5,8 +5,10 @@ import TestCard from '../components/TestCard';
 import PackageCard from '../components/PackageCard';
 import HealthConcerns from '../components/HealthConcerns';
 import TrustSection from '../components/TrustSection';
+import Button from '../components/ui/Button';
 import { useState, useEffect } from 'react';
 import api from '../services/api';
+import { FiUserCheck } from 'react-icons/fi';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -34,122 +36,167 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <Hero />
+    <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-white overflow-x-hidden">
+      <main className="w-full">
+        <Hero />
 
-      {/* Frequently Booked Tests */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-8"
-          >
-            <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gray-900">
-              Frequently Booked Tests
-            </h2>
-            <p className="text-gray-600 text-sm">
-              Most popular diagnostic tests with up to 77% discount
-            </p>
-          </motion.div>
+        {/* Frequently Booked Tests */}
+        <section id="tests" className="py-16 bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 dark:bg-gray-950">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-12"
+            >
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                <span className="bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
+                  Frequently Booked Tests
+                </span>
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Most popular diagnostic tests with up to 77% discount
+              </p>
+            </motion.div>
 
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-              <p className="mt-4 text-gray-600">Loading tests...</p>
-            </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
-                {tests.map((test) => (
-                  <TestCard key={test.id} test={test} />
-                ))}
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <p className="mt-4 text-gray-600 dark:text-gray-400">Loading tests...</p>
               </div>
-              <div className="text-center">
-                <button
-                  onClick={() => navigate('/tests')}
-                  className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
-                >
-                  View All Tests
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      </section>
-
-      {/* Popular Health Packages */}
-      <section className="py-12 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-8"
-          >
-            <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gray-900">
-              Popular Health Packages
-            </h2>
-            <p className="text-gray-600 text-sm">
-              Comprehensive health checkup packages at best prices
-            </p>
-          </motion.div>
-
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-              <p className="mt-4 text-gray-600">Loading packages...</p>
-            </div>
-          ) : (
-            <div className="relative">
-              {/* Scrollable Container */}
-              <div 
-                id="packages-scroll-container"
-                className="overflow-x-auto pb-4 scrollbar-hide"
-                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-              >
-                <div className="flex gap-4 md:gap-6" style={{ minWidth: 'min-content' }}>
-                  {packages.map((pkg) => (
-                    <div key={pkg.id} className="flex-shrink-0 w-[280px]">
-                      <PackageCard pkg={pkg} />
-                    </div>
+            ) : (
+              <>
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                  {tests.map((test) => (
+                    <TestCard key={test.id} test={test} />
                   ))}
                 </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
 
-      {/* Trust Section */}
-      <TrustSection />
+                {/* View All Button */}
+                <div className="text-center">
+                  <Button
+                    onClick={() => navigate('/tests')}
+                    size="lg"
+                    variant="primary"
+                  >
+                    View All Tests
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        </section>
 
-      {/* Doctor Consultation CTA */}
-      <section className="py-12 bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 md:p-12 text-center text-white border border-white/20"
-          >
-            <div className="text-5xl mb-4">👨‍⚕️</div>
-            <h2 className="text-2xl md:text-3xl font-bold mb-3">
-              Need Expert Medical Advice?
-            </h2>
-            <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-              Consult with our experienced doctors online. Get personalized health guidance from the comfort of your home.
-            </p>
-            <button
-              onClick={() => navigate('/consultation')}
-              className="px-8 py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition font-semibold shadow-lg"
+        {/* Popular Health Packages */}
+        <section id="packages" className="py-16 pb-14 bg-white dark:bg-gray-900">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-12"
             >
-              Book Online Consultation
-            </button>
-          </motion.div>
-        </div>
-      </section>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  Popular Health Packages
+                </span>
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Comprehensive health checkup packages at best prices
+              </p>
+            </motion.div>
+
+            {/* Horizontal Scrollable Container with Arrows */}
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                <p className="mt-4 text-gray-600 dark:text-gray-400">Loading packages...</p>
+              </div>
+            ) : (
+              <div className="relative">
+                {/* Left Arrow */}
+                <button
+                  onClick={() => {
+                    const container = document.getElementById('packages-scroll-container');
+                    if (container) {
+                      container.scrollBy({ left: -300, behavior: 'smooth' });
+                    }
+                  }}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-800 shadow-xl rounded-full p-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all hover:scale-110 border-2 border-gray-200 dark:border-gray-700"
+                  aria-label="Scroll left"
+                >
+                  <svg className="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+
+                {/* Right Arrow */}
+                <button
+                  onClick={() => {
+                    const container = document.getElementById('packages-scroll-container');
+                    if (container) {
+                      container.scrollBy({ left: 300, behavior: 'smooth' });
+                    }
+                  }}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-800 shadow-xl rounded-full p-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all hover:scale-110 border-2 border-gray-200 dark:border-gray-700"
+                  aria-label="Scroll right"
+                >
+                  <svg className="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+
+                {/* Scrollable Container */}
+                <div 
+                  id="packages-scroll-container"
+                  className="overflow-x-auto pb-4 scrollbar-hide px-12"
+                >
+                  <div className="flex gap-6 py-2" style={{ minWidth: 'min-content' }}>
+                    {packages.map((pkg) => (
+                      <div key={pkg.id} className="flex-shrink-0 w-[280px] h-[510px]">
+                        <PackageCard pkg={pkg} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Health Concerns */}
+        <HealthConcerns />
+
+        {/* Trust Section */}
+        <TrustSection />
+
+        {/* Doctor Consultation CTA */}
+        <section className="py-16 bg-gradient-to-r from-blue-600 via-teal-500 to-purple-600">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="bg-white/20 backdrop-blur-lg rounded-3xl p-8 md:p-12 text-center text-white border-2 border-white/30 shadow-2xl"
+            >
+              <FiUserCheck className="mx-auto mb-6" size={64} />
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Need Expert Medical Advice?
+              </h2>
+              <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
+                Consult with our experienced doctors online. Get personalized health guidance from the comfort of your home.
+              </p>
+              <Button
+                size="lg"
+                onClick={() => navigate('/consultation')}
+                className="bg-white text-blue-600 hover:bg-blue-50 dark:bg-white dark:text-blue-600 dark:hover:bg-gray-100"
+              >
+                Book Online Consultation
+              </Button>
+            </motion.div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }

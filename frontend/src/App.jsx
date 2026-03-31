@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import MobileNav from './components/MobileNav';
+import FloatingButtons from './components/FloatingButtons';
 import HomePage from './pages/HomePage';
 import ConsultationPage from './pages/ConsultationPage';
 import TestsPage from './pages/TestsPage';
@@ -12,7 +13,7 @@ import './App.css';
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20 md:pb-0">
+      <div className="min-h-screen bg-gray-50 pb-20 md:pb-0">
         <Header />
         <main>
           <Routes>
@@ -25,6 +26,7 @@ function App() {
         </main>
         <Footer />
         <MobileNav />
+        <FloatingButtons />
       </div>
     </Router>
   );

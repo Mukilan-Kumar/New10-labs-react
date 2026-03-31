@@ -18,46 +18,46 @@ export default function PackageCard({ pkg }) {
 
   return (
     <motion.div
-      whileHover={{ y: -8 }}
-      className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-lg hover:shadow-2xl transition-all border-2 border-purple-200 dark:border-purple-700 h-full flex flex-col relative"
+      whileHover={{ y: -4 }}
+      className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md hover:shadow-lg transition-all border border-blue-200 dark:border-blue-700 h-full flex flex-col relative"
     >
       {/* Popular Badge */}
       {isPopular && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-600 text-white px-4 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+        <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-purple-600 text-white px-3 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1">
           ⭐ POPULAR
         </div>
       )}
 
       {/* Package Header */}
-      <div className="mb-4">
-        <h3 className="font-bold text-xl mb-1 text-blue-600 dark:text-blue-400">
+      <div className="mb-3">
+        <h3 className="font-bold text-lg mb-0.5 text-blue-600 dark:text-blue-400">
           {pkg.name}
         </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400">Includes Tests</p>
+        <p className="text-xs text-gray-600 dark:text-gray-400">Includes Tests</p>
       </div>
 
       {/* Discount Badge */}
       {discount > 0 && (
-        <div className="mb-3">
-          <span className="inline-block px-3 py-1 bg-green-100 text-green-700 text-sm font-bold rounded">
+        <div className="mb-2">
+          <span className="inline-block px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded">
             Save {discount}%
           </span>
         </div>
       )}
 
       {/* Test List */}
-      <div className="mb-4 flex-grow">
-        <div className="space-y-2">
+      <div className="mb-3 flex-grow">
+        <div className="space-y-1.5">
           {testsList.slice(0, 4).map((test, index) => (
-            <div key={index} className="flex items-start gap-2 text-sm">
-              <FiCheck className="text-green-600 mt-0.5 flex-shrink-0" size={16} />
+            <div key={index} className="flex items-start gap-1.5 text-xs">
+              <FiCheck className="text-green-600 mt-0.5 flex-shrink-0" size={14} />
               <span className="text-gray-700 dark:text-gray-300">{test}</span>
             </div>
           ))}
           {testsList.length > 4 && (
             <button
               onClick={() => setShowTests(!showTests)}
-              className="text-blue-600 text-sm font-medium hover:underline"
+              className="text-blue-600 text-xs font-medium hover:underline"
             >
               +{testsList.length - 4} more tests
             </button>
@@ -66,28 +66,28 @@ export default function PackageCard({ pkg }) {
       </div>
 
       {/* Pricing */}
-      <div className="mb-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-        <div className="flex items-baseline gap-2 mb-1">
-          <span className="text-2xl font-bold text-gray-900 dark:text-white">₹{pkg.price}</span>
+      <div className="mb-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex items-baseline gap-1.5 mb-0.5">
+          <span className="text-xl font-bold text-gray-900 dark:text-white">₹{pkg.price}</span>
           {pkg.mrp > pkg.price && (
-            <span className="text-sm text-gray-500 line-through">₹{pkg.mrp}</span>
+            <span className="text-xs text-gray-500 line-through">₹{pkg.mrp}</span>
           )}
         </div>
-        <p className="text-xs text-gray-500">MRP: ₹{pkg.mrp} (Incl. of all taxes)</p>
+        <p className="text-[10px] text-gray-500">MRP: ₹{pkg.mrp} (Incl. of all taxes)</p>
       </div>
 
       {/* Buttons */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <button
           onClick={handleBook}
-          className="w-full px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg transition flex items-center justify-center gap-2 font-medium"
+          className="w-full px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition flex items-center justify-center gap-1.5 font-medium text-sm"
         >
-          <FaWhatsapp size={18} />
+          <FaWhatsapp size={16} />
           Book on WhatsApp
         </button>
         <button
           onClick={() => setShowTests(!showTests)}
-          className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition text-sm font-medium"
+          className="w-full px-3 py-1.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-md transition text-xs font-medium"
         >
           📋 View Tests Included
         </button>

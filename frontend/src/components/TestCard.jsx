@@ -12,40 +12,40 @@ export default function TestCard({ test }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
-      whileHover={{ y: -8 }}
-      className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-lg hover:shadow-2xl transition-all border border-gray-200 dark:border-gray-700 relative"
+      whileHover={{ y: -4 }}
+      className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md hover:shadow-lg transition-all border border-gray-100 dark:border-gray-700 relative"
     >
       {/* Discount Badge */}
       {discount > 0 && (
-        <div className="absolute top-3 right-3 bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">
+        <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-0.5 rounded text-xs font-semibold">
           {discount}% OFF
         </div>
       )}
 
       {/* Test Name */}
-      <h3 className="font-bold text-base mb-3 text-gray-900 dark:text-white line-clamp-2 min-h-[48px]">
+      <h3 className="font-semibold text-sm mb-2 text-gray-900 dark:text-white line-clamp-2 min-h-[40px]">
         {test.name}
       </h3>
 
       {/* Test Details */}
-      <div className="space-y-2 mb-4 text-xs text-gray-600 dark:text-gray-400">
-        <div className="flex items-center gap-2">
-          <FiActivity size={14} className="text-blue-600" />
+      <div className="space-y-1 mb-3 text-xs text-gray-600 dark:text-gray-400">
+        <div className="flex items-center gap-1.5">
+          <FiActivity size={12} className="text-blue-600" />
           <span>1 Parameters</span>
         </div>
-        <div className="flex items-center gap-2">
-          <FiClock size={14} className="text-teal-600" />
+        <div className="flex items-center gap-1.5">
+          <FiClock size={12} className="text-teal-600" />
           <span>{test.tat || '1 Day'}</span>
         </div>
       </div>
 
       {/* Fasting Badge */}
       {test.fastingRequired && (
-        <div className="mb-3">
-          <span className="inline-block px-2 py-1 bg-yellow-100 text-yellow-700 text-xs font-medium rounded">
+        <div className="mb-2">
+          <span className="inline-block px-2 py-0.5 bg-yellow-100 text-yellow-700 text-[10px] font-medium rounded">
             Fasting Required
           </span>
         </div>
@@ -53,21 +53,21 @@ export default function TestCard({ test }) {
 
       {/* Pricing */}
       <div className="mb-3">
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-bold text-gray-900 dark:text-white">₹{test.price}</span>
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-xl font-bold text-gray-900 dark:text-white">₹{test.price}</span>
           {test.mrp > test.price && (
-            <span className="text-sm text-gray-500 line-through">₹{test.mrp}</span>
+            <span className="text-xs text-gray-500 line-through">₹{test.mrp}</span>
           )}
         </div>
-        <p className="text-xs text-gray-500 mt-1">MRP: ₹{test.mrp} (Incl. of all taxes)</p>
+        <p className="text-[10px] text-gray-500 mt-0.5">MRP: ₹{test.mrp} (Incl. of all taxes)</p>
       </div>
 
       {/* Book Button */}
       <button
         onClick={handleBook}
-        className="w-full px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg transition flex items-center justify-center gap-2 font-medium"
+        className="w-full px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition flex items-center justify-center gap-1.5 font-medium text-sm"
       >
-        <FaWhatsapp size={18} />
+        <FaWhatsapp size={16} />
         Book on WhatsApp
       </button>
     </motion.div>

@@ -7,8 +7,10 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           <div>
-            <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-teal-400 bg-clip-text text-transparent mb-4">
-              Newton Labs
+            <h3 className="text-2xl font-bold mb-4">
+              <span className="text-gray-100">New</span>
+              <span className="text-red-500">10</span>
+              <span className="text-gray-100">labs</span>
             </h3>
             <p className="text-gray-400 text-sm">
               Your trusted diagnostic partner for accurate and timely health reports.
@@ -51,7 +53,7 @@ export default function Footer() {
         </div>
         
         <div className="border-t border-gray-800 pt-8 text-center text-sm text-gray-400">
-          <p>&copy; 2026 Newton Labs. All rights reserved.</p>
+          <p>&copy; 2026 New10labs. All rights reserved.</p>
         </div>
       </div>
     </footer>

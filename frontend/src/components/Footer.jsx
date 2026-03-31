@@ -7,13 +7,15 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           <div>
-            <h3 className="text-2xl font-bold mb-4">
-              <span className="text-gray-100">New</span>
-              <span className="text-red-500">10</span>
-              <span className="text-gray-100">labs</span>
-            </h3>
+            <div className="flex items-center gap-2 mb-4">
+              <img 
+                src="/New10labs-logo.png" 
+                alt="New10Labs Logo" 
+                className="h-16 w-auto object-contain"
+              />
+            </div>
             <p className="text-gray-400 text-sm">
-              Your trusted diagnostic partner for accurate and timely health reports.
+              India's most trusted diagnostic laboratory with NABL certified facilities.
             </p>
           </div>
           

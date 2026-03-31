@@ -35,19 +35,11 @@ export default function Header() {
         <div className="flex justify-between items-center gap-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-12 h-12 bg-gradient-to-br from-red-500 via-pink-500 to-blue-600 rounded-full flex items-center justify-center relative shadow-md">
-              <div className="absolute inset-1 bg-white rounded-full flex items-center justify-center">
-                <span className="text-blue-600 font-bold text-lg">N10</span>
-              </div>
-            </div>
-            <div>
-              <div className="font-bold text-xl leading-tight">
-                <span className="text-gray-800">New</span>
-                <span className="text-red-500">10</span>
-                <span className="text-gray-800">labs</span>
-              </div>
-              <div className="text-[10px] text-gray-500 uppercase tracking-wide">DIAGNOSTIC CENTRE</div>
-            </div>
+            <img 
+              src="/New10labs-logo.png" 
+              alt="New10Labs Logo" 
+              className="h-16 md:h-20 w-auto object-contain"
+            />
           </Link>
 
           {/* Location */}

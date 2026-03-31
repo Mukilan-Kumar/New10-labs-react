@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage';
 import ConsultationPage from './pages/ConsultationPage';
 import TestsPage from './pages/TestsPage';
 import PackagesPage from './pages/PackagesPage';
+import HomeVisitPage from './pages/HomeVisitPage';
 import AdminDashboard from './pages/AdminDashboard';
 import './App.css';
 
@@ -21,6 +22,7 @@ function App() {
             <Route path="/consultation" element={<ConsultationPage />} />
             <Route path="/tests" element={<TestsPage />} />
             <Route path="/packages" element={<PackagesPage />} />
+            <Route path="/home-visit" element={<HomeVisitPage />} />
             <Route path="/admin/consultations" element={<AdminDashboard />} />
           </Routes>
         </main>

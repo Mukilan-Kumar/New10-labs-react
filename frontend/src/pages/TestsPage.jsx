@@ -1,22 +1,26 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { FiActivity, FiClock, FiDroplet } from 'react-icons/fi';
-import { FaWhatsapp } from 'react-icons/fa';
+import { FiSearch, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import TestCard from '../components/TestCard';
 import api from '../services/api';
 
+const TESTS_PER_PAGE = 24;
+
 export default function TestsPage() {
-  const [tests, setTests] = useState([]);
-  const [search, setSearch] = useState('');
+  const [allTests, setAllTests] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchTests();
-  }, [search]);
+  }, []);
 
   const fetchTests = async () => {
     try {
-      const response = await api.get('/tests', { params: { search } });
-      setTests(response.data);
+      const response = await api.get('/tests');
+      setAllTests(response.data);
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -24,90 +28,178 @@ export default function TestsPage() {
     }
   };
 
-  const handleBook = (test) => {
-    const message = `Hi, I want to book ${test.name} test (₹${test.price})`;
-    window.open(`https://wa.me/919360264347?text=${encodeURIComponent(message)}`, '_blank');
-  };
+  // Get unique categories
+  const categories = useMemo(() => {
+    if (!allTests.length) return ['All'];
+    return ['All', ...Array.from(new Set(allTests.map(test => test.category)))];
+  }, [allTests]);
+
+  // Filter tests with flexible search
+  const filteredTests = useMemo(() => {
+    return allTests.filter((test) => {
+      // Normalize strings for flexible matching
+      const normalizeString = (str) => {
+        return str
+          .toLowerCase()
+          .replace(/[\s\-_]/g, '') // Remove spaces, hyphens, underscores
+          .replace(/[().,]/g, ''); // Remove parentheses, commas, dots
+      };
+      
+      const normalizedQuery = normalizeString(searchQuery);
+      const normalizedTestName = normalizeString(test.name);
+      
+      const matchesSearch = searchQuery === '' || normalizedTestName.includes(normalizedQuery);
+      const matchesCategory = selectedCategory === 'All' || test.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [allTests, searchQuery, selectedCategory]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredTests.length / TESTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * TESTS_PER_PAGE;
+  const paginatedTests = filteredTests.slice(startIndex, startIndex + TESTS_PER_PAGE);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 dark:bg-gray-950 py-12">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
-              Diagnostic Tests
-            </span>
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Browse our comprehensive range of diagnostic tests
-          </p>
-        </motion.div>
+    <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-white">
+      <main className="pt-24 pb-20">
+        <div className="container mx-auto px-4">
+          {/* Header Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-12"
+          >
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
+                All Diagnostic Tests
+              </span>
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-8">
+              Browse our complete range of {loading ? '...' : `${allTests.length}+`} diagnostic tests with up to 91% discount
+            </p>
 
-        <div className="mb-8 max-w-2xl mx-auto">
-          <input
-            type="text"
-            placeholder="Search tests..."
-            className="w-full p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-blue-500 focus:outline-none shadow-lg"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto relative mb-6">
+              <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="text"
+                placeholder="Search for tests..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:border-blue-500 dark:focus:border-blue-400 outline-none transition-colors"
+              />
+            </div>
 
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            {/* Category Filter */}
+            <div className="flex flex-wrap gap-2 justify-center">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => {
+                    setSelectedCategory(category);
+                    setCurrentPage(1);
+                  }}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    selectedCategory === category
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Results Count */}
+          <div className="mb-6 text-center text-gray-600 dark:text-gray-400">
+            Showing {startIndex + 1}-{Math.min(startIndex + TESTS_PER_PAGE, filteredTests.length)} of {filteredTests.length} tests
           </div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {tests.map((test) => (
-              <motion.div
-                key={test.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                whileHover={{ y: -8 }}
-                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all"
+
+          {/* Tests Grid */}
+          {loading ? (
+            <div className="text-center py-20">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+              <p className="mt-4 text-gray-600 dark:text-gray-400">Loading tests...</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              {paginatedTests.map((test, index) => (
+                <motion.div
+                  key={test.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.02 }}
+                >
+                  <TestCard test={test} />
+                </motion.div>
+              ))}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-4">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
               >
-                <h3 className="font-bold text-lg mb-3 line-clamp-2 min-h-[56px]">{test.name}</h3>
-                
-                <div className="space-y-2 mb-4 text-sm text-gray-600 dark:text-gray-400">
-                  <div className="flex items-center gap-2">
-                    <FiActivity size={16} className="text-blue-600" />
-                    <span>{test.department}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <FiClock size={16} className="text-teal-600" />
-                    <span>{test.tat || '24 Hours'}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <FiDroplet size={16} className="text-purple-600" />
-                    <span>{test.sampleType || 'Blood'}</span>
-                  </div>
-                </div>
+                <FiChevronLeft size={20} />
+              </button>
+              
+              <div className="flex gap-2">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+                  
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`w-10 h-10 rounded-lg font-medium transition-colors ${
+                        currentPage === pageNum
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+              </div>
 
-                <div className="pt-3 border-t">
-                  <div className="flex items-baseline gap-2 mb-3">
-                    <span className="text-2xl font-bold text-blue-600">₹{test.price}</span>
-                    {test.mrp > test.price && (
-                      <span className="text-sm text-gray-500 line-through">₹{test.mrp}</span>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => handleBook(test)}
-                    className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition flex items-center justify-center gap-2"
-                  >
-                    <FaWhatsapp size={18} />
-                    Book on WhatsApp
-                  </button>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        )}
-      </div>
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              >
+                <FiChevronRight size={20} />
+              </button>
+            </div>
+          )}
+
+          {/* No Results */}
+          {filteredTests.length === 0 && (
+            <div className="text-center py-20">
+              <p className="text-gray-500 dark:text-gray-400 text-lg">
+                No tests found matching "{searchQuery}"
+              </p>
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 }

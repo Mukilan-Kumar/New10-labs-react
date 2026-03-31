@@ -1,135 +1,234 @@
 import { useState } from 'react';
-import api from '../services/api';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { FiArrowLeft, FiUser, FiMail, FiPhone, FiMessageSquare } from 'react-icons/fi';
+import Button from '../components/ui/Button';
 
 export default function ConsultationPage() {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    message: ''
+    message: '',
   });
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
-      const response = await api.post('/consultations', formData);
-      console.log('✅ Consultation submitted successfully:', response.data);
+      // Create WhatsApp message with form data
+      let message = `Hi, I would like to book an Online Consultation from New10Lab.\n\n`;
+      message += `*My Details:*\n`;
+      message += `*Name:* ${formData.name}\n`;
+      message += `*Email:* ${formData.email}\n`;
+      message += `*Phone:* ${formData.phone}\n\n`;
+      message += `*Health Concern:*\n${formData.message}\n\n`;
+      message += `Please contact me to schedule a consultation.`;
       
-      const consultationId = response.data.data?.consultationId || 'PENDING';
+      const whatsappUrl = `https://wa.me/919360264347?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
       
+      // Show success message
       setSuccess(true);
+      setLoading(false);
       
-      // WhatsApp redirect after short delay
       setTimeout(() => {
-        const whatsappMessage = `Hi, I would like to book an Online Consultation from New10Lab.
-
-My Details:
-Name: ${formData.name}
-Email: ${formData.email}
-Phone: ${formData.phone}
-
-Health Concern:
-${formData.message}
-
-Consultation ID: ${consultationId}
-
-Please contact me to schedule a consultation.`;
-        
-        window.open(`https://wa.me/919360264347?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
-      }, 1500);
-      
-      setFormData({ name: '', email: '', phone: '', message: '' });
-      
+        navigate('/');
+      }, 2000);
     } catch (error) {
-      console.error('❌ Consultation submission error:', error);
-      
-      if (error.response) {
-        // Server responded with error
-        console.error('Server error response:', error.response.data);
-        console.error('Status code:', error.response.status);
-        alert(`Failed to submit: ${error.response.data?.message || 'Server error'}`);
-      } else if (error.request) {
-        // Request made but no response
-        console.error('No response from server:', error.request);
-        alert('Cannot connect to server. Please check your connection.');
-      } else {
-        // Error in request setup
-        console.error('Request error:', error.message);
-        alert(`Error: ${error.message}`);
-      }
-    } finally {
+      console.error('Error submitting consultation:', error);
+      alert('An error occurred. Please try again.');
       setLoading(false);
     }
   };
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-2xl">
-      <h1 className="text-4xl font-bold mb-8 text-center">Online Consultation</h1>
-      
-      {success && (
-        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-          Consultation request submitted! Redirecting to WhatsApp...
-        </div>
-      )}
-      
-      <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
-        <div className="mb-4">
-          <label className="block mb-2 font-semibold">Name</label>
-          <input
-            type="text"
-            required
-            className="w-full p-3 border rounded dark:bg-gray-700"
-            value={formData.name}
-            onChange={(e) => setFormData({...formData, name: e.target.value})}
-          />
-        </div>
-        
-        <div className="mb-4">
-          <label className="block mb-2 font-semibold">Email</label>
-          <input
-            type="email"
-            required
-            className="w-full p-3 border rounded dark:bg-gray-700"
-            value={formData.email}
-            onChange={(e) => setFormData({...formData, email: e.target.value})}
-          />
-        </div>
-        
-        <div className="mb-4">
-          <label className="block mb-2 font-semibold">Phone</label>
-          <input
-            type="tel"
-            required
-            className="w-full p-3 border rounded dark:bg-gray-700"
-            value={formData.phone}
-            onChange={(e) => setFormData({...formData, phone: e.target.value})}
-          />
-        </div>
-        
-        <div className="mb-6">
-          <label className="block mb-2 font-semibold">Health Concern</label>
-          <textarea
-            required
-            rows="4"
-            className="w-full p-3 border rounded dark:bg-gray-700"
-            placeholder="Describe your health concern..."
-            value={formData.message}
-            onChange={(e) => setFormData({...formData, message: e.target.value})}
-          />
-        </div>
-        
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50"
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-teal-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <main className="container mx-auto px-4 py-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-2xl mx-auto"
         >
-          {loading ? 'Submitting...' : 'Submit Consultation'}
-        </button>
-      </form>
+          {/* Back Button */}
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 mb-6 transition-colors"
+          >
+            <FiArrowLeft /> Back
+          </button>
+
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="text-6xl mb-4">👨‍⚕️</div>
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
+                Book Online Consultation
+              </span>
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Fill in your details and our medical team will contact you shortly
+            </p>
+          </div>
+
+          {/* Form Card */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 border-2 border-gray-100 dark:border-gray-700"
+          >
+            {success ? (
+              <div className="text-center py-12">
+                <div className="text-7xl mb-6 animate-bounce">✅</div>
+                <h2 className="text-2xl font-bold text-green-600 mb-4">
+                  Consultation Saved & Redirecting to WhatsApp!
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 mb-2">
+                  Your consultation has been saved to our database.
+                </p>
+                <p className="text-gray-600 dark:text-gray-400 mb-2">
+                  Please send the message on WhatsApp to confirm.
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-500">
+                  Redirecting to home page...
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Name Field */}
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Full Name <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      name="name"
+                      required
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="Enter your full name"
+                      className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:border-blue-600 dark:focus:border-blue-500 outline-none transition-colors"
+                    />
+                  </div>
+                </div>
+
+                {/* Email Field */}
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Email Address <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="email"
+                      name="email"
+                      required
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="your.email@example.com"
+                      className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:border-blue-600 dark:focus:border-blue-500 outline-none transition-colors"
+                    />
+                  </div>
+                </div>
+
+                {/* Phone Field */}
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Phone Number <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <FiPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="tel"
+                      name="phone"
+                      required
+                      value={formData.phone}
+                      onChange={handleChange}
+                      placeholder="+91 XXXXX XXXXX"
+                      pattern="[0-9+\s-]+"
+                      className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:border-blue-600 dark:focus:border-blue-500 outline-none transition-colors"
+                    />
+                  </div>
+                </div>
+
+                {/* Message Field */}
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Message / Health Concern <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <FiMessageSquare className="absolute left-4 top-4 text-gray-400" />
+                    <textarea
+                      name="message"
+                      required
+                      value={formData.message}
+                      onChange={handleChange}
+                      placeholder="Please describe your health concern or reason for consultation..."
+                      rows={5}
+                      className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:border-blue-600 dark:focus:border-blue-500 outline-none transition-colors resize-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full"
+                  size="lg"
+                >
+                  {loading ? 'Submitting...' : 'Submit Consultation Request'}
+                </Button>
+
+                {/* Info Text */}
+                <p className="text-xs text-center text-gray-500 dark:text-gray-400">
+                  By submitting this form, you agree to receive communication from Newton's Lab regarding your consultation.
+                </p>
+              </form>
+            )}
+          </motion.div>
+
+          {/* Features */}
+          {!success && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="grid md:grid-cols-3 gap-4 mt-8"
+            >
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 text-center border-2 border-blue-100 dark:border-blue-900">
+                <div className="text-3xl mb-2">⚡</div>
+                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Quick Response</p>
+                <p className="text-xs text-gray-500">Within 24 hours</p>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 text-center border-2 border-teal-100 dark:border-teal-900">
+                <div className="text-3xl mb-2">🔒</div>
+                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Secure & Private</p>
+                <p className="text-xs text-gray-500">Your data is safe</p>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 text-center border-2 border-purple-100 dark:border-purple-900">
+                <div className="text-3xl mb-2">👨‍⚕️</div>
+                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Expert Doctors</p>
+                <p className="text-xs text-gray-500">Qualified professionals</p>
+              </div>
+            </motion.div>
+          )}
+        </motion.div>
+      </main>
     </div>
   );
 }

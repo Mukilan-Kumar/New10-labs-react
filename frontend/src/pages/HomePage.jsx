@@ -26,7 +26,9 @@ export default function HomePage() {
         api.get('/tests'),
         api.get('/packages')
       ]);
-      setTests(testsRes.data.slice(0, 8));
+      // Sort tests by price (lowest first) for frequently booked
+      const sortedTests = testsRes.data.sort((a, b) => a.mrp - b.mrp);
+      setTests(sortedTests.slice(0, 8));
       setPackages(packagesRes.data);
     } catch (error) {
       console.error('Error:', error);
